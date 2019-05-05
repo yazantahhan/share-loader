@@ -74,8 +74,12 @@ module.exports.pitch = function (remainingRequest) {
 
   this._module.userRequest = this._module.userRequest + '-shared';
 
-  return accesorString(globalVar) + " = " +
-    "Object.assign(" + propertyString(globalVar) + " || {}, require(" + JSON.stringify("-!" + newRequestPath) + "));";
+    return `var required = require(${JSON.stringify("-!" + newRequestPath)});
+    	if(typeof required === 'function') {
+	  ${accesorString(globalVar)} = required;
+        } else { 
+          ${accesorString(globalVar)} = Object.assign(${propertyString(globalVar)} || {}, required); 
+        }`;
 };
 
 module.exports.Externals = function(options) {
